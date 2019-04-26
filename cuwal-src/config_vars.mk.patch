@@ -1,4 +1,0 @@
-67c67
-< CFLAGS = -pipe -g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security
----
-> CFLAGS = -pipe -g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat

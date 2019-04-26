@@ -1,28 +1,16 @@
-FROM ubuntu:14.04
+FROM 095493758574.dkr.ecr.us-east-1.amazonaws.com/base12
+
 
 # Install.
 RUN \
-  apt-get update && apt-get install --no-install-recommends -y \
-    build-essential \
-    curl \
-    git \
-    unzip \
-    vim \
-    wget \
-    ruby \
-    ruby-dev \
-    clamav-daemon \
-    openssh-client && \
-  rm -rf /var/lib/apt/lists/*
-
-
-RUN \
   apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y apache2 && \
+  apt-get install -y apache2 && \
   apt-get clean
 
-#copy files needed for CUWA
+# copy files needed for CUWA
 COPY conf/cuwebauth.load /etc/apache2/mods-available/cuwebauth.load
+COPY conf/apache2.conf /etc/apache2/apache2.conf
+COPY lib/libcom_err.so.3 /lib/libcom_err.so.3
 COPY lib/mod_cuwebauth.so /usr/lib/apache2/modules/mod_cuwebauth.so
 
 # we will use for data and what not
@@ -35,9 +23,6 @@ RUN \
   rewrite \
   proxy \
   proxy_http
-
-# Add test suite to image
-COPY bin/run-tests.sh /root/test-suite/
 
 EXPOSE 80
 EXPOSE 443
