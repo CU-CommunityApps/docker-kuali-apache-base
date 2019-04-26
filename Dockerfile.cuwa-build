@@ -1,4 +1,27 @@
-FROM dtr.cucloud.net/cs/base
+FROM ubuntu:14.04
+
+
+# Install.
+RUN \
+  apt-get update && apt-get install --no-install-recommends -y \
+    build-essential \
+    curl \
+    git \
+    unzip \
+    vim \
+    wget \
+    ruby \
+    ruby-dev \
+    clamav-daemon \
+    openssh-client && \
+  rm -rf /var/lib/apt/lists/*
+
+
+# Set environment variables.
+ENV HOME /root
+
+# Define working directory.
+WORKDIR /root
 
 ARG CUWA_VERSION=2.3.0.238
 
