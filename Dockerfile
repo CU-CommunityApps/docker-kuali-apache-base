@@ -1,7 +1,28 @@
-FROM 095493758574.dkr.ecr.us-east-1.amazonaws.com/base12
+FROM ubuntu:14.04
 
 
-# Install.
+# Install base
+RUN \
+  apt-get update && apt-get install --no-install-recommends -y \
+    build-essential \
+    curl \
+    git \
+    unzip \
+    vim \
+    wget \
+    ruby \
+    ruby-dev \
+    clamav-daemon \
+    openssh-client && \
+  rm -rf /var/lib/apt/lists/*
+
+# Set environment variables.
+ENV HOME /root
+
+# Define working directory.
+WORKDIR /root
+
+# Install apache23
 RUN \
   apt-get update && \
   apt-get install -y apache2 && \
