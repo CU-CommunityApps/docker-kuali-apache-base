@@ -20,13 +20,6 @@ RUN \
 RUN rm /etc/localtime
 RUN ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
 
-#Clamav stuff
-RUN freshclam -v && \
- mkdir /var/run/clamav && \
- chown clamav:clamav /var/run/clamav && \
- chmod 750 /var/run/clamav
-
-COPY conf/clamd.conf /etc/clamav/clamd.conf
 
 RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc && \
   gem install json_pure -v 1.8.1 && \ 
