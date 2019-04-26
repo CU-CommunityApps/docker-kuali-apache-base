@@ -49,6 +49,8 @@ COPY lib/mod_cuwebauth.so /usr/lib/apache2/modules/mod_cuwebauth.so
 # we will use for data and what not
 RUN mkdir /infra/
 
+RUN mkdir /etc/apache2/conf.d
+
 # turn on mods
 RUN \
   a2enmod ssl \
