@@ -1,6 +1,6 @@
 FROM openshift/base-centos7
 
-RUN yum install httpd
+RUN yum -y install httpd
 
 
 
