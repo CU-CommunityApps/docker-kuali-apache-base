@@ -1,0 +1,15 @@
+FROM dtr.cucloud.net/cs/base
+
+ARG CUWA_VERSION=2.3.0.238
+
+RUN \
+  apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y apache2 apache2-dev indent libkrb5-dev autoconf && \
+  apt-get clean
+
+RUN mkdir /root/cuwa-build
+
+COPY cuwal-src/ /root/cuwa-build/
+
+WORKDIR /root/cuwa-build
+RUN /root/cuwa-build/cuwal-build.sh
