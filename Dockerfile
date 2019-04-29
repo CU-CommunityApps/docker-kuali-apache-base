@@ -17,10 +17,6 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 
-RUN rm /etc/localtime
-RUN ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
-
-
 RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc && \
   gem install json_pure -v 1.8.1 && \ 
   gem install puppet -v 3.7.5 && \
