@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:14.04
 
 
 # Install base
@@ -10,8 +10,7 @@ RUN \
     unzip \
     vim \
     wget \
-    ruby \
-    ruby-dev \
+    ruby1.9.3 \
     clamav-daemon \
     openssh-client && \
   rm -rf /var/lib/apt/lists/*
@@ -38,7 +37,7 @@ RUN \
 
 # copy files needed for CUWA
 COPY conf/cuwebauth.load /etc/apache2/mods-available/cuwebauth.load
-COPY conf/apache2.conf /etc/apache2/apache2.conf
+#COPY conf/apache2.conf /etc/apache2/apache2.conf
 COPY lib/libcom_err.so.3 /lib/libcom_err.so.3
 COPY lib/mod_cuwebauth.so /usr/lib/apache2/modules/mod_cuwebauth.so
 
