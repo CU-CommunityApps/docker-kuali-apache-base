@@ -40,6 +40,16 @@ COPY conf/cuwebauth.load /etc/apache2/mods-available/cuwebauth.load
 #COPY conf/apache2.conf /etc/apache2/apache2.conf
 COPY lib/libcom_err.so.3 /lib/libcom_err.so.3
 COPY lib/mod_cuwebauth.so /usr/lib/apache2/modules/mod_cuwebauth.so
+COPY lib/libcrypto.so.1.0.0 /lib/libcrypto.so.1.0.0
+COPY lib/libgssapi_krb5.so.2 /lib/libgssapi_krb5.so.2
+COPY lib/libk5crypto.so.3 /lib/libk5crypto.so.3
+COPY lib/libkrb5.so.3 /lib/libkrb5.so.3
+COPY lib/libkrb5support.so.0 /lib/libkrb5support.so.0
+COPY lib/libssl.so.1.0.0 /lib/libssl.so.1.0.0
+
+RUN ln -s /lib/libssl.so.1.0.0 /lib/libssl.so.10
+RUN ln -s /lib/libcrypto.so.1.0.0 /lib/libcrypto.so.10
+
 
 # we will use for data and what not
 RUN mkdir /infra/
