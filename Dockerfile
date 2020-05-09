@@ -1,5 +1,7 @@
-FROM ubuntu:14.04
+FROM ubuntu:20.04
 
+ENV TZ=America/New_York
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install base
 RUN \
