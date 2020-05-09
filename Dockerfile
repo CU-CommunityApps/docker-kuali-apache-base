@@ -10,7 +10,7 @@ RUN \
     unzip \
     vim \
     wget \
-    ruby1.9.3 \
+    ruby \
     clamav-daemon \
     openssh-client && \
   rm -rf /var/lib/apt/lists/*
