@@ -14,6 +14,7 @@ RUN \
     less \
     wget \
     ruby \
+    ruby-dev \
     clamav-daemon \
     libssl-dev \
     openssh-client && \
