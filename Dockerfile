@@ -23,6 +23,7 @@ RUN \
 
 RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc && \
   gem install json_pure && \
+  gem install thor -v 1.2.2 && \
   gem install puppet -v 7.24.0 && \
   gem install librarian-puppet && \
   gem uninstall -I concurrent-ruby && \
