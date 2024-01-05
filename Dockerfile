@@ -28,6 +28,7 @@ RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc && \
   gem install librarian-puppet && \
   gem uninstall -I concurrent-ruby && \
   gem install concurrent-ruby -v 1.1.10 && \
+  gem install highline -v 2.1.0 && \
   gem install hiera-eyaml
 
 
