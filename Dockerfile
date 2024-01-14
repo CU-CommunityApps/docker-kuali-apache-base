@@ -24,13 +24,13 @@ RUN \
 RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc && \
   gem install json_pure && \
   gem install thor -v 1.2.2 && \
+  gem uninstall -I faraday-net_http && \
+  gem install faraday-net_http -v 3.0.2 && \
   gem install puppet -v 7.24.0 && \
   gem install librarian-puppet && \
   gem uninstall -I concurrent-ruby && \
   gem install concurrent-ruby -v 1.1.10 && \
   gem install highline -v 2.1.0 && \
-  gem uninstall -I faraday-net_http && \
-  gem install faraday-net_http -v 3.0.2 && \
   gem install hiera-eyaml
 
 
