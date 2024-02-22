@@ -1,5 +1,13 @@
 pipeline {
-    agent { dockerfile true }
+    agent { 
+        dockerfile {
+            registryUrl '078742956215.dkr.ecr.us-east-1.amazonaws.com/kuali/kfs-apache-base'
+            registryCredentialsId 'jenkins-aws'
+        }
+    }
+    options {
+        skipStagesAfterUnstable()
+    }
     stages {
         stage('Test') {
             steps {
