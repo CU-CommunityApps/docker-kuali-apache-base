@@ -1,7 +1,7 @@
 pipeline {
     agent { 
         dockerfile {
-            registryUrl '078742956215.dkr.ecr.us-east-1.amazonaws.com/kuali/kfs-apache-base'
+            registryUrl 'https://078742956215.dkr.ecr.us-east-1.amazonaws.com/kuali/kfs-apache-base'
             registryCredentialsId 'ecr:us-east-1:jenkins-aws'
         }
     }
