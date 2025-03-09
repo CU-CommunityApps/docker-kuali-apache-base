@@ -28,7 +28,7 @@ RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc && \
   gem install faraday-net_http -v 3.0.2 && \
   gem install faraday -v 2.8.1 && \
   gem install puppet -v 7.24.0 && \
-  gem install librarian-puppet && \
+  gem install librarian-puppet -v 5.0.0 && \
   gem uninstall -I concurrent-ruby && \
   gem install concurrent-ruby -v 1.1.10 && \
   gem install highline -v 2.1.0 && \
