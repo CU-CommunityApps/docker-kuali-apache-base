@@ -48,7 +48,7 @@ RUN \
 
 # Download and build OpenSSL
 RUN \
-  wget https://www.openssl.org/source/openssl-3.4.1.tar.gz && \
+  wget --no-verbose https://www.openssl.org/source/openssl-3.4.1.tar.gz && \
   tar -xzf openssl-3.4.1.tar.gz && \
   cd openssl-3.4.1 && \
   ./config && \
@@ -59,7 +59,7 @@ RUN \
 
 # Download and build OpenSSH
 RUN \
-  wget https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-9.9p2.tar.gz && \
+  wget --no-verbose https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-9.9p2.tar.gz && \
   tar -xzf openssh-9.9p2.tar.gz && \
   cd openssh-9.9p2 && \
   ./configure && \
@@ -70,7 +70,7 @@ RUN \
 
 # Download and build OpenSAML
 RUN \
-  wget https://shibboleth.net/downloads/c++-opensaml/latest/opensaml-3.3.1.tar.gz && \
+  wget --no-verbose https://shibboleth.net/downloads/c++-opensaml/latest/opensaml-3.3.1.tar.gz && \
   tar -xzf opensaml-3.3.1.tar.gz && \
   cd opensaml-3.3.1 && \
   ./configure && \
