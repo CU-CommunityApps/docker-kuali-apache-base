@@ -15,25 +15,13 @@ RUN \
     wget \
     ruby \
     ruby-dev \
-    clamav-daemon \
     libssl-dev \
     openssh-client && \
   rm -rf /var/lib/apt/lists/*
 
-
 RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc && \
-  gem install json_pure && \
-  gem install thor -v 1.2.2 && \
-  gem install minitar -v 0.12 && \
-  gem install faraday-net_http -v 3.0.2 && \
-  gem install faraday -v 2.8.1 && \
-  gem install puppet -v 7.24.0 && \
-  gem install librarian-puppet -v 5.0.0 && \
-  gem uninstall -I concurrent-ruby && \
-  gem install concurrent-ruby -v 1.1.10 && \
-  gem install highline -v 2.1.0 && \
-  gem install hiera-eyaml
-
+  gem install puppet && \
+  gem install librarian-puppet
 
 # Set environment variables.
 ENV HOME /root
@@ -57,6 +45,39 @@ RUN \
   rewrite \
   proxy \
   proxy_http
+
+# Download and build OpenSSL
+RUN \
+  wget https://www.openssl.org/source/openssl-3.4.1.tar.gz && \
+  tar -xzf openssl-3.4.1.tar.gz && \
+  cd openssl-3.4.1 && \
+  ./config && \
+  make && \
+  make install && \
+  cd .. && \
+  rm -rf openssl-3.4.1 openssl-3.4.1.tar.gz
+
+# Download and build OpenSSH
+RUN \
+  wget https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-9.9p2.tar.gz && \
+  tar -xzf openssh-9.9p2.tar.gz && \
+  cd openssh-9.9p2 && \
+  ./configure && \
+  make && \
+  make install && \
+  cd .. && \
+  rm -rf openssh-9.9p2 openssh-9.9p2.tar.gz
+
+# Download and build OpenSAML
+RUN \
+  wget https://shibboleth.net/downloads/c++-opensaml/latest/opensaml-3.3.1.tar.gz && \
+  tar -xzf opensaml-3.3.1.tar.gz && \
+  cd opensaml-3.3.1 && \
+  ./configure && \
+  make && \
+  make install && \
+  cd .. && \
+  rm -rf opensaml-3.3.1 opensaml-3.3.1.tar.gz
 
 EXPOSE 80
 EXPOSE 443
