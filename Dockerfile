@@ -22,7 +22,7 @@ RUN \
 
 
 RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc && \
-  gem install json_pure -v 2.7.6 && \
+  gem install json_pure && \
   gem install multi_json -v 1.15.0 && \
   gem install thor -v 1.2.2 && \
   gem install minitar -v 0.12 && \
