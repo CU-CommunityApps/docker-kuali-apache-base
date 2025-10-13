@@ -1,65 +1,40 @@
-FROM ubuntu:20.04
+# KFSPTS-34282: Amazon Linux 2023 base for Apache httpd + Shibboleth SP (OpenSAML >= 3.3.1)
+FROM public.ecr.aws/amazonlinux/amazonlinux:2023
 
-ENV TZ=America/New_York
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+# Update and install base packages (RHEL/httpd layout)
+RUN dnf -y update && dnf -y install \
+    httpd mod_ssl mod_proxy mod_proxy_http mod_headers mod_rewrite \
+    tar gzip unzip git curl wget make gcc gcc-c++ which openssh-clients \
+    clamav clamav-update ruby ruby-devel rubygems && \
+    dnf clean all
 
-# Install base
-RUN \
-  apt-get update && apt-get install --no-install-recommends -y \
-    build-essential \
-    curl \
-    git \
-    unzip \
-    vim \
-    less \
-    wget \
-    ruby \
-    ruby-dev \
-    clamav-daemon \
-    libssl-dev \
-    openssh-client && \
-  rm -rf /var/lib/apt/lists/*
+# Shibboleth SP official repo (ensures OpenSAML >= 3.3.1 on AL2023)
+COPY shibboleth.repo /etc/yum.repos.d/shibboleth.repo
 
+# Pre-create shibd user/group with pinned numeric IDs 200:200 before installing RPM
+# Keep the account name 'shibd' per package default
+RUN groupadd -g 200 shibd || true && \
+    id -u shibd >/dev/null 2>&1 || useradd -u 200 -g 200 -r -s /sbin/nologin -d /var/run/shibboleth shibd
 
-RUN echo "gem: --no-ri --no-rdoc" > ~/.gemrc && \
-  gem install json_pure && \
-  gem install multi_json -v 1.15.0 && \
-  gem install thor -v 1.2.2 && \
-  gem install minitar -v 0.12 && \
-  gem install faraday-net_http -v 3.0.2 && \
-  gem install faraday -v 2.8.1 && \
-  gem install puppet -v 7.24.0 && \
-  gem install librarian-puppet -v 5.0.0 && \
-  gem uninstall -I concurrent-ruby && \
-  gem install concurrent-ruby -v 1.1.10 && \
-  gem install highline -v 2.1.0 && \
-  gem install hiera-eyaml
+# Install Shibboleth SP
+RUN dnf -y install shibboleth && dnf clean all
 
+# Ensure runtime paths and ownership for shibd
+RUN mkdir -p /var/log/shibboleth /var/run/shibboleth && \
+    chown -R shibd:shibd /var/log/shibboleth /var/run/shibboleth
 
-# Set environment variables.
-ENV HOME /root
+# Install top-level Ruby gems (no pins)
+RUN gem install --no-document \
+    puppet \
+    librarian-puppet \
+    hiera-eyaml \
+    aws-sdk-ssm \
+    aws-sdk-secretsmanager
 
-# Define working directory.
-WORKDIR /root
+# Minimal scaffolding and standard httpd locations (RHEL layout)
+RUN mkdir -p /infra/httpd /etc/httpd/conf.d
 
-# Install apache23
-RUN \
-  apt-get update && \
-  apt-get install -y apache2 && \
-  apt-get clean
+EXPOSE 80 443
 
-# we will use for data and what not
-RUN mkdir /infra
-RUN mkdir /etc/apache2/conf.d
-
-# turn on mods
-RUN \
-  a2enmod ssl \
-  rewrite \
-  proxy \
-  proxy_http
-
-EXPOSE 80
-EXPOSE 443
-
-CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+# Default CMD runs httpd in foreground; overlays may override with entrypoint wrapper
+CMD ["/usr/sbin/httpd","-DFOREGROUND"]
