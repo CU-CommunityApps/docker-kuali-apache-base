@@ -1,0 +1,7 @@
+[shibboleth]
+name=Shibboleth (RHEL 9 / Amazon Linux 2023)
+mirrorlist=https://shibboleth.net/cgi-bin/mirrorlist.cgi/amazonlinux2023
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
+gpgkey=https://shibboleth.net/downloads/service-provider/RPMS/keys/RPM-GPG-KEY-shibboleth

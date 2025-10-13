@@ -1,0 +1,40 @@
+# KFSPTS-34282: Amazon Linux 2023 base for Apache httpd + Shibboleth SP (OpenSAML >= 3.3.1)
+FROM public.ecr.aws/amazonlinux/amazonlinux:2023
+
+# Update and install base packages (RHEL/httpd layout)
+RUN dnf -y update && dnf -y install \
+    httpd mod_ssl \
+    tar gzip unzip git curl-minimal wget make gcc gcc-c++ which openssh-clients \
+    clamav clamav-update ruby ruby-devel rubygems && \
+    dnf clean all
+
+# Shibboleth SP official repo (ensures OpenSAML >= 3.3.1 on AL2023)
+COPY shibboleth.repo /etc/yum.repos.d/shibboleth.repo
+
+# Pre-create shibd user/group with pinned numeric IDs 200:200 before installing RPM
+# Keep the account name 'shibd' per package default
+RUN groupadd -g 200 shibd || true && \
+    id -u shibd >/dev/null 2>&1 || useradd -u 200 -g 200 -r -s /sbin/nologin -d /var/run/shibboleth shibd
+
+# Install Shibboleth SP
+RUN dnf -y install shibboleth && dnf clean all
+
+# Ensure runtime paths and ownership for shibd
+RUN mkdir -p /var/log/shibboleth /var/run/shibboleth && \
+    chown -R shibd:shibd /var/log/shibboleth /var/run/shibboleth
+
+# Install top-level Ruby gems (no pins)
+RUN gem install --no-document \
+    puppet \
+    librarian-puppet \
+    hiera-eyaml \
+    aws-sdk-ssm \
+    aws-sdk-secretsmanager
+
+# Minimal scaffolding and standard httpd locations (RHEL layout)
+RUN mkdir -p /infra/httpd /etc/httpd/conf.d
+
+EXPOSE 80 443
+
+# Default CMD runs httpd in foreground; overlays may override with entrypoint wrapper
+CMD ["/usr/sbin/httpd","-DFOREGROUND"]
