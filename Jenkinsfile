@@ -55,13 +55,13 @@ echo "Building base image ${imageName}" && \\
 docker build --no-cache --progress=plain \\
     -f ${workspaceOnHost}/${params.DOCKERFILE} \\
     -t ${ecrRepo}:latest \\
-    -t ${ecrRepo}:web_${branchClean} \\
-    -t ${ecrRepo}:web_${branchClean}_${buildDate} \\
+    -t ${ecrRepo}:apache-base_${branchClean} \\
+    -t ${ecrRepo}:apache-base_${branchClean}_${buildDate} \\
     ${workspaceOnHost} && \\
-echo "Pushing tags: latest, web_${branchClean}, web_${branchClean}_${buildDate}" && \\
+echo "Pushing tags: latest, apache-base_${branchClean}, apache-base_${branchClean}_${buildDate}" && \\
 docker push ${ecrRepo}:latest && \\
-docker push ${ecrRepo}:web_${branchClean} && \\
-docker push ${ecrRepo}:web_${branchClean}_${buildDate} && \\
+docker push ${ecrRepo}:apache-base_${branchClean} && \\
+docker push ${ecrRepo}:apache-base_${branchClean}_${buildDate} && \\
 rm -f ${lockFile} || \\
 ( rm -f ${lockFile} && touch ${workspaceOnHost}/failed.txt )"""
                     
@@ -96,8 +96,8 @@ rm -f ${lockFile} || \\
                     Image: ${ecrRepo}
                     Tags created:
                       - latest
-                      - web_${branchClean}
-                      - web_${branchClean}_${buildDate}
+                      - apache-base_${branchClean}
+                      - apache-base_${branchClean}_${buildDate}
                     
                     To use this base for an environment build:
                     1. Use retag-docker-image job to create env-specific tags
