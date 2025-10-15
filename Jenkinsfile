@@ -27,9 +27,12 @@ pipeline {
         stage('Build and Push Base Image') {
             steps {
                 script {
-                    def lockFile = "/jenkins_home/pipe/lock/${env.JOB_NAME}"
-                    def pipe = "/var/jenkins_home/pipe/${env.JOB_NAME}"
-                    def workspace = "/jenkins_home/workspace/${env.JOB_NAME}"
+                    // For multibranch pipeline, JOB_NAME includes branch like "job/branch"
+                    // Extract just the base job name for pipe mechanism
+                    def baseJobName = env.JOB_NAME.replaceAll('/.*', '')
+                    def lockFile = "/jenkins_home/pipe/lock/${baseJobName}"
+                    def pipe = "/var/jenkins_home/pipe/${baseJobName}"
+                    def workspace = env.WORKSPACE
                     def buildDate = sh(script: 'TZ="America/New_York" date +"%Y%m%d-%H%M%S%Z"', returnStdout: true).trim()
                     def branchClean = env.BRANCH_NAME.replaceAll('/', '_')
                     
