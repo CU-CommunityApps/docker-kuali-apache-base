@@ -32,7 +32,9 @@ pipeline {
                     def baseJobName = env.JOB_NAME.replaceAll('/.*', '')
                     def lockFile = "/jenkins_home/pipe/lock/${baseJobName}"
                     def pipe = "/var/jenkins_home/pipe/${baseJobName}"
-                    def workspace = env.WORKSPACE
+                    def workspaceInContainer = env.WORKSPACE
+                    // On host, workspace is mounted without /var prefix
+                    def workspaceOnHost = workspaceInContainer.replaceAll('^/var', '')
                     def buildDate = sh(script: 'TZ="America/New_York" date +"%Y%m%d-%H%M%S%Z"', returnStdout: true).trim()
                     def branchClean = env.BRANCH_NAME.replaceAll('/', '_')
                     
@@ -42,23 +44,26 @@ pipeline {
                     echo "Building ${imageName} from ${params.DOCKERFILE}"
                     echo "Branch: ${branchClean}"
                     echo "Build Date: ${buildDate}"
+                    echo "Workspace in container: ${workspaceInContainer}"
+                    echo "Workspace on host: ${workspaceOnHost}"
                     
                     // Use pipe mechanism like other jobs
+                    // Paths in pipeCommand run on HOST, so use workspaceOnHost
                     def pipeCommand = """touch ${lockFile} && \\
-${workspace}/cloud-utils/bin/ecr-login.sh && \\
+${workspaceOnHost}/cloud-utils/bin/ecr-login.sh && \\
 echo "Building base image ${imageName}" && \\
 docker build --no-cache --progress=plain \\
-    -f ${workspace}/${params.DOCKERFILE} \\
+    -f ${workspaceOnHost}/${params.DOCKERFILE} \\
     -t ${ecrRepo}:latest \\
     -t ${ecrRepo}:web_${branchClean} \\
     -t ${ecrRepo}:web_${branchClean}_${buildDate} \\
-    ${workspace} && \\
+    ${workspaceOnHost} && \\
 echo "Pushing tags: latest, web_${branchClean}, web_${branchClean}_${buildDate}" && \\
 docker push ${ecrRepo}:latest && \\
 docker push ${ecrRepo}:web_${branchClean} && \\
 docker push ${ecrRepo}:web_${branchClean}_${buildDate} && \\
 rm -f ${lockFile} || \\
-( rm -f ${lockFile} && touch ${workspace}/failed.txt )"""
+( rm -f ${lockFile} && touch ${workspaceOnHost}/failed.txt )"""
                     
                     echo pipeCommand
                     
@@ -79,7 +84,7 @@ rm -f ${lockFile} || \\
                     
                     // Check for failure
                     sh """
-                        if [ -f /var${workspace}/failed.txt ]; then
+                        if [ -f ${workspaceInContainer}/failed.txt ]; then
                             exit 1
                         fi
                     """
