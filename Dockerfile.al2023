@@ -5,8 +5,13 @@ FROM public.ecr.aws/amazonlinux/amazonlinux:2023
 RUN dnf -y update && dnf -y install \
     httpd mod_ssl \
     tar gzip unzip git curl-minimal wget make gcc gcc-c++ which openssh-clients \
-    clamav clamav-update ruby ruby-devel rubygems && \
+    clamav clamav-update ruby ruby-devel rubygems \
+    procps-ng && \
     dnf clean all
+
+# Verify apache user was created with reserved UID:GID 48:48 by httpd RPM
+RUN getent passwd apache | grep -q 'apache:x:48:48:' || \
+    (echo "ERROR: apache user not UID:GID 48:48" && exit 1)
 
 # Shibboleth SP official repo (ensures OpenSAML >= 3.3.1 on AL2023)
 COPY shibboleth.repo /etc/yum.repos.d/shibboleth.repo
