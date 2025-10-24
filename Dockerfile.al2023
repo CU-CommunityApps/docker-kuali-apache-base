@@ -29,9 +29,10 @@ RUN dnf -y install shibboleth && dnf clean all
 RUN mkdir -p /var/log/shibboleth /var/run/shibboleth && \
     chown -R shibd:shibd /var/log/shibboleth /var/run/shibboleth
 
-# Install top-level Ruby gems (no pins, NO librarian-puppet)
+# Install top-level Ruby gems (librarian-puppet needed for private repo in overlay)
 RUN gem install --no-document \
     puppet \
+    librarian-puppet \
     hiera-eyaml \
     aws-sdk-ssm \
     aws-sdk-secretsmanager
