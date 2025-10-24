@@ -2,11 +2,12 @@
 FROM public.ecr.aws/amazonlinux/amazonlinux:2023
 
 # Update and install base packages (RHEL/httpd layout)
+# Note: mod_proxy_http, mod_headers, mod_rewrite are included with httpd package
 RUN dnf -y update && dnf -y install \
     httpd mod_ssl \
     tar gzip unzip git curl-minimal wget make gcc gcc-c++ which openssh-clients \
     clamav clamav-update ruby ruby-devel rubygems \
-    procps-ng && \
+    procps-ng less bind-utils net-tools iputils vim-minimal && \
     dnf clean all
 
 # Verify apache user was created with reserved UID:GID 48:48 by httpd RPM
@@ -28,10 +29,9 @@ RUN dnf -y install shibboleth && dnf clean all
 RUN mkdir -p /var/log/shibboleth /var/run/shibboleth && \
     chown -R shibd:shibd /var/log/shibboleth /var/run/shibboleth
 
-# Install top-level Ruby gems (no pins)
+# Install top-level Ruby gems (no pins, NO librarian-puppet)
 RUN gem install --no-document \
     puppet \
-    librarian-puppet \
     hiera-eyaml \
     aws-sdk-ssm \
     aws-sdk-secretsmanager
