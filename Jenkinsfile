@@ -55,13 +55,15 @@ echo "Building base image ${imageName}" && \\
 docker build --no-cache --progress=plain \\
     -f ${workspaceOnHost}/${params.DOCKERFILE} \\
     -t ${ecrRepo}:latest \\
+    -t ${ecrRepo}:apache-base \\
     -t ${ecrRepo}:apache-base_${branchClean} \\
     -t ${ecrRepo}:apache-base_${branchClean}_${buildDate} \\
     ${workspaceOnHost} && \\
-echo "Pushing tags: latest, apache-base_${branchClean}, apache-base_${branchClean}_${buildDate}" && \\
-docker push ${ecrRepo}:latest && \\
-docker push ${ecrRepo}:apache-base_${branchClean} && \\
-docker push ${ecrRepo}:apache-base_${branchClean}_${buildDate} && \\
+echo "Pushing tags: latest, apache-base, apache-base_${branchClean}, apache-base_${branchClean}_${buildDate}" && \\
+docker push --quiet ${ecrRepo}:latest && \\
+docker push --quiet ${ecrRepo}:apache-base && \\
+docker push --quiet ${ecrRepo}:apache-base_${branchClean} && \\
+docker push --quiet ${ecrRepo}:apache-base_${branchClean}_${buildDate} && \\
 rm -f ${lockFile} || \\
 ( rm -f ${lockFile} && touch ${workspaceOnHost}/failed.txt )"""
                     
@@ -95,15 +97,19 @@ rm -f ${lockFile} || \\
                     =====================================================
                     Image: ${ecrRepo}
                     Tags created:
-                      - latest
+                      - latest (newest build, may be experimental)
+                      - apache-base (VALIDATED stable base for all environments)
                       - apache-base_${branchClean}
                       - apache-base_${branchClean}_${buildDate}
                     
                     To use this base for an environment build:
-                    1. Use retag-docker-image job to create env-specific tags
-                       Example: destination_tag=latest, tag_to_be_moved=dfa-test
-                    2. Run build-docker-kuali-apache-al2023 with env=dfa-test
-                       It will use BASE_TAG=dfa-test (the tag you created)
+                    1. Test and validate the base image
+                    2. Once validated, :apache-base tag represents production-ready base
+                    3. Use retag-docker-image job to create env-specific tags FROM :apache-base
+                       Example: source_tag=apache-base, destination_tag=dfa-test
+                    4. Build overlay: build-docker-kuali-apache-al2023 with BASE_TAG=dfa-test
+                    
+                    NOTE: :apache-base is the STABLE tag - all env tags should come from it
                     =====================================================
                     """
                 }
