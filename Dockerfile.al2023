@@ -6,7 +6,7 @@ FROM public.ecr.aws/amazonlinux/amazonlinux:2023
 RUN dnf -y update && dnf -y install \
     httpd mod_ssl \
     tar gzip unzip git curl-minimal wget make gcc gcc-c++ which openssh-clients \
-    clamav clamav-update ruby ruby-devel rubygems \
+    ruby ruby-devel rubygems \
     procps-ng less bind-utils net-tools iputils vim-minimal && \
     dnf clean all
 
