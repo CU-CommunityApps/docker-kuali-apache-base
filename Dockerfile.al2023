@@ -25,6 +25,9 @@ RUN groupadd -g 200 shibd || true && \
 # Install Shibboleth SP
 RUN dnf -y install shibboleth && dnf clean all
 
+# Add apache user to shibd group for socket access
+RUN usermod -a -G shibd apache
+
 # Ensure runtime paths and ownership for shibd
 RUN mkdir -p /var/log/shibboleth /var/run/shibboleth && \
     chown -R shibd:shibd /var/log/shibboleth /var/run/shibboleth
