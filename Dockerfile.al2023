@@ -7,7 +7,8 @@ RUN dnf -y update && dnf -y install \
     httpd mod_ssl \
     tar gzip unzip git curl-minimal wget make gcc gcc-c++ which openssh-clients \
     ruby ruby-devel rubygems \
-    procps-ng less bind-utils net-tools iputils vim-minimal && \
+    procps-ng less bind-utils net-tools iputils vim-minimal \
+    tzdata && \
     dnf clean all
 
 # Verify apache user was created with reserved UID:GID 48:48 by httpd RPM
